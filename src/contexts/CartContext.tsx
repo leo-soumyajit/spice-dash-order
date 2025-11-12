@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { MenuItem } from "@/data/menuData";
 
 export interface CartItem {
@@ -19,8 +19,51 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+const CART_STORAGE_KEY = "food-cart-items";
+const CART_TIMESTAMP_KEY = "food-cart-timestamp";
+const CART_EXPIRY_HOURS = 2;
+
+const loadCartFromStorage = (): CartItem[] => {
+  try {
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+    const savedTimestamp = localStorage.getItem(CART_TIMESTAMP_KEY);
+    
+    if (!savedCart || !savedTimestamp) return [];
+    
+    const timestamp = parseInt(savedTimestamp);
+    const now = Date.now();
+    const hoursElapsed = (now - timestamp) / (1000 * 60 * 60);
+    
+    if (hoursElapsed > CART_EXPIRY_HOURS) {
+      localStorage.removeItem(CART_STORAGE_KEY);
+      localStorage.removeItem(CART_TIMESTAMP_KEY);
+      return [];
+    }
+    
+    return JSON.parse(savedCart);
+  } catch (error) {
+    console.error("Error loading cart from storage:", error);
+    return [];
+  }
+};
+
+const saveCartToStorage = (items: CartItem[]) => {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    if (!localStorage.getItem(CART_TIMESTAMP_KEY)) {
+      localStorage.setItem(CART_TIMESTAMP_KEY, Date.now().toString());
+    }
+  } catch (error) {
+    console.error("Error saving cart to storage:", error);
+  }
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(loadCartFromStorage);
+
+  useEffect(() => {
+    saveCartToStorage(cartItems);
+  }, [cartItems]);
 
   const addToCart = (item: MenuItem, quantity: number, portion: "full" | "half") => {
     setCartItems((prev) => [...prev, { item, quantity, portion }]);
@@ -40,6 +83,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem(CART_STORAGE_KEY);
+    localStorage.removeItem(CART_TIMESTAMP_KEY);
   };
 
   const getTotalPrice = () => {
