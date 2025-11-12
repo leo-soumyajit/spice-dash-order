@@ -4,9 +4,10 @@ import MenuItemCard from "./MenuItemCard";
 interface MenuSectionProps {
   category: string;
   items: MenuItem[];
+  onItemClick: (item: MenuItem) => void;
 }
 
-const MenuSection = ({ category, items }: MenuSectionProps) => {
+const MenuSection = ({ category, items, onItemClick }: MenuSectionProps) => {
   return (
     <section className="py-8">
       <h2 className="text-4xl font-bold text-foreground mb-8 text-center">
@@ -14,7 +15,11 @@ const MenuSection = ({ category, items }: MenuSectionProps) => {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {items.map((item, index) => (
-          <MenuItemCard key={`${item.name}-${index}`} item={item} />
+          <MenuItemCard 
+            key={`${item.name}-${index}`} 
+            item={item}
+            onClick={() => onItemClick(item)}
+          />
         ))}
       </div>
     </section>

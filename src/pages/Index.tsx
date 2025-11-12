@@ -2,11 +2,19 @@ import { useState } from "react";
 import Hero from "@/components/Hero";
 import CategoryTabs from "@/components/CategoryTabs";
 import MenuSection from "@/components/MenuSection";
+import MenuItemDialog from "@/components/MenuItemDialog";
 import Footer from "@/components/Footer";
-import { menuData, categories } from "@/data/menuData";
+import { menuData, categories, MenuItem } from "@/data/menuData";
 
 const Index = () => {
   const [activeCategory, setActiveCategory] = useState(categories[0]);
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleItemClick = (item: MenuItem) => {
+    setSelectedItem(item);
+    setDialogOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -21,8 +29,15 @@ const Index = () => {
         <MenuSection 
           category={activeCategory}
           items={menuData[activeCategory]}
+          onItemClick={handleItemClick}
         />
       </main>
+
+      <MenuItemDialog 
+        item={selectedItem}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
 
       <Footer />
     </div>
