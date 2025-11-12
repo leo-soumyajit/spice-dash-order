@@ -12,9 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Trash2, Plus, Minus, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-// removed Badge import (not used)
 import AddressForm from "./AddressForm";
-// removed Separator import (not used)
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AddressData {
@@ -90,33 +88,45 @@ Please confirm this order. Thank you! 🙏`;
 
   return (
     <>
-      {/* Zomato-style Bottom Bar (Mobile only, flush to bottom). Hidden when cart is open */}
+      {/* Zomato-style Bottom Bar - Flush to bottom on mobile, centered pill on desktop */}
       {!isOpen && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
-          <div
-            onClick={() => setIsOpen(true)}
-            className="pointer-events-auto bg-primary text-primary-foreground rounded-none shadow-2xl cursor-pointer hover:scale-[1.01] transition-transform active:scale-[0.99]"
-          >
-            <div className="px-5 py-3.5 flex items-center justify-between pb-[env(safe-area-inset-bottom)]">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <ShoppingCart className="h-5 w-5" />
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-destructive border-2 border-primary">
-                    {itemCount}
-                  </Badge>
-                </div>
+        <>
+          {/* Mobile - Full width bar at bottom */}
+          <div className="md:hidden fixed inset-x-0 bottom-0 z-40">
+            <button
+              type="button"
+              onClick={() => setIsOpen(true)}
+              className="w-full bg-primary text-primary-foreground shadow-2xl transition-transform active:scale-[0.99]"
+            >
+              <div className="px-5 py-3.5 flex items-center justify-between pb-[env(safe-area-inset-bottom)]">
                 <div className="text-left">
                   <p className="text-xs font-medium opacity-90">{itemCount} item{itemCount > 1 ? 's' : ''}</p>
                   <p className="text-base font-bold">₹{totalPrice}</p>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold">View Cart</span>
-                <ChevronUp className="h-4 w-4" />
               </div>
+            </button>
+          </div>
+
+          {/* Desktop - Centered pill */}
+          <div className="hidden md:block fixed inset-x-0 bottom-6 z-40 pointer-events-none">
+            <div className="pointer-events-auto mx-auto w-full max-w-2xl px-4">
+              <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="w-full bg-primary text-primary-foreground rounded-full shadow-2xl hover:scale-[1.01] transition-transform"
+              >
+                <div className="px-6 py-3.5 flex items-center justify-between">
+                  <span className="text-sm">{itemCount} item{itemCount > 1 ? 's' : ''}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-base font-bold">₹{totalPrice}</span>
+                    <span className="text-sm font-semibold">View Cart</span>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Cart Drawer */}
