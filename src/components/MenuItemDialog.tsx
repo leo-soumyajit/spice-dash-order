@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { MenuItem } from "@/data/menuData";
-import { ArrowLeft } from "lucide-react";
-import AddressForm from "./AddressForm";
+import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useCart } from "@/contexts/CartContext";
+import { useToast } from "@/hooks/use-toast";
 
 // Import all images
 import chickenCurry from "@/assets/chicken-curry.jpg";
@@ -36,75 +37,23 @@ const imageMap: Record<string, string> = {
   "chowmein": chowmein,
 };
 
-interface AddressData {
-  name: string;
-  phone: string;
-  address: string;
-  instructions?: string;
-  location?: {
-    lat: number;
-    lng: number;
-    address: string;
-  };
-}
-
 const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
-  const [showAddressForm, setShowAddressForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [portion, setPortion] = useState<"full" | "half">("full");
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   if (!item) return null;
 
-  const handleOrderClick = () => {
-    setShowAddressForm(true);
-  };
-
-  const handleAddressSubmit = (data: AddressData) => {
-    const phoneNumber = "917908288829";
-    
-    // Create Google Maps link if location is available
-    const locationLink = data.location 
-      ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
-      : '';
-    
-    const pricePerItem = portion === "half" && item.half ? item.half : item.price;
-    const totalPrice = pricePerItem * quantity;
-    const portionText = portion === "half" ? " (Half)" : " (Full)";
-    
-    const message = `🍽️ *New Order Request*
-
-📦 *Item:* ${item.name}${item.half ? portionText : ''}
-🔢 *Quantity:* ${quantity}
-💰 *Price per item:* ₹${pricePerItem}
-💵 *Total:* ₹${totalPrice}
-
-👤 *Customer Details:*
-Name: ${data.name}
-Phone: ${data.phone}
-
-📍 *Delivery Address:*
-${data.address}
-${data.location ? `\n📌 *Exact Location:*\n${data.location.address}\n\n🗺️ *Map Link:*\n${locationLink}` : ''}
-
-${data.instructions ? `📝 *Special Instructions:*\n${data.instructions}\n` : ''}
-Please confirm this order. Thank you! 🙏`;
-
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-    
-    // Redirect to WhatsApp
-    window.location.href = whatsappUrl;
-    
-    // Close the dialog after a short delay
-    setTimeout(() => {
-      onOpenChange(false);
-      setShowAddressForm(false);
-      setQuantity(1);
-    }, 500);
-  };
-
-  const handleBackClick = () => {
-    setShowAddressForm(false);
+  const handleAddToCart = () => {
+    addToCart(item, quantity, portion);
+    toast({
+      title: "Added to cart",
+      description: `${item.name} ${item.half ? `(${portion})` : ''} × ${quantity}`,
+    });
+    onOpenChange(false);
+    setQuantity(1);
+    setPortion("full");
   };
 
   const imageSrc = imageMap[item.image] || chickenCurry;
@@ -113,32 +62,18 @@ Please confirm this order. Thank you! 🙏`;
     <Dialog open={open} onOpenChange={(isOpen) => {
       onOpenChange(isOpen);
       if (!isOpen) {
-        setShowAddressForm(false);
         setQuantity(1);
         setPortion("full");
       }
     }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <div className="flex items-center gap-2">
-            {showAddressForm && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleBackClick}
-                className="hover:bg-muted"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            )}
-            <DialogTitle className="text-2xl font-bold text-foreground">
-              {showAddressForm ? "Delivery Details" : item.name}
-            </DialogTitle>
-          </div>
+          <DialogTitle className="text-2xl font-bold text-foreground">
+            {item.name}
+          </DialogTitle>
         </DialogHeader>
         
-        {!showAddressForm ? (
-          <div className="space-y-4">
+        <div className="space-y-4">
             <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden shadow-lg">
               <img 
                 src={imageSrc} 
@@ -178,13 +113,6 @@ Please confirm this order. Thank you! 🙏`;
             </div>
 
             <div className="flex gap-3 items-stretch">
-              <Button
-                onClick={handleOrderClick}
-                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105"
-              >
-                Proceed to Order
-              </Button>
-              
               <div className="flex items-center gap-2 border-2 border-primary/20 rounded-xl px-3 bg-muted/30">
                 <Button
                   variant="ghost"
@@ -207,16 +135,16 @@ Please confirm this order. Thank you! 🙏`;
                   <span className="text-xl font-bold text-primary">+</span>
                 </Button>
               </div>
+              
+              <Button
+                onClick={handleAddToCart}
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                Add to Cart
+              </Button>
             </div>
           </div>
-        ) : (
-          <AddressForm
-            itemName={item.name}
-            itemPrice={portion === "half" && item.half ? item.half : item.price}
-            quantity={quantity}
-            onSubmit={handleAddressSubmit}
-          />
-        )}
       </DialogContent>
     </Dialog>
   );
