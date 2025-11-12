@@ -92,7 +92,7 @@ Please confirm this order. Thank you! 🙏`;
       {!isOpen && (
         <>
           {/* Mobile - Full width bar at bottom */}
-          <div className="md:hidden fixed inset-x-0 bottom-0 z-40">
+          <div className="md:hidden fixed inset-x-0 bottom-0 z-50">
             <button
               type="button"
               onClick={() => setIsOpen(true)}
@@ -130,7 +130,7 @@ Please confirm this order. Thank you! 🙏`;
       )}
 
       {/* Cart Drawer */}
-      <Drawer open={isOpen} onOpenChange={(open) => {
+      <Drawer shouldScaleBackground={false} open={isOpen} onOpenChange={(open) => {
         setIsOpen(open);
         if (!open) setShowAddressForm(false);
       }}>
