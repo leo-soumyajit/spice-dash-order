@@ -3,6 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
+import Cart from "./Cart";
 import { MenuItem } from "@/data/menuData";
 
 interface NavbarProps {

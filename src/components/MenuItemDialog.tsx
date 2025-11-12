@@ -62,7 +62,6 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
     <Dialog open={open} onOpenChange={(isOpen) => {
       onOpenChange(isOpen);
       if (!isOpen) {
-        setShowAddressForm(false);
         setQuantity(1);
         setPortion("full");
       }
