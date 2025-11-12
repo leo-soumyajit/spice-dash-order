@@ -90,49 +90,33 @@ Please confirm this order. Thank you! 🙏`;
 
   return (
     <>
-      {/* Floating Cart Summary - Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-        <div 
-          onClick={() => setIsOpen(true)}
-          className="bg-primary text-primary-foreground mx-3 mb-3 rounded-xl shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform active:scale-[0.98]"
-        >
-          <div className="px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center p-0 text-[10px] bg-destructive">
-                  {itemCount}
-                </Badge>
+      {/* Floating Cart Summary - Bottom Bar (Both Mobile & Desktop) */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
+        <div className="max-w-7xl mx-auto px-4 pb-4">
+          <div 
+            onClick={() => setIsOpen(true)}
+            className="bg-primary text-primary-foreground rounded-xl shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform active:scale-[0.98] pointer-events-auto"
+          >
+            <div className="px-5 py-3.5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <ShoppingCart className="h-5 w-5" />
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-[10px] bg-destructive border-2 border-primary">
+                    {itemCount}
+                  </Badge>
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-medium opacity-90">{itemCount} item{itemCount > 1 ? 's' : ''}</p>
+                  <p className="text-base font-bold">₹{totalPrice}</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-xs font-medium opacity-90">{itemCount} item{itemCount > 1 ? 's' : ''}</p>
-                <p className="text-sm font-bold">₹{totalPrice}</p>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold">View Cart</span>
+                <ChevronUp className="h-4 w-4" />
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold">View Cart</span>
-              <ChevronUp className="h-4 w-4" />
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Desktop Cart Button */}
-      <div className="hidden md:block">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setIsOpen(true)}
-          className="relative hover:bg-primary/10 hover:border-primary transition-all"
-        >
-          <ShoppingCart className="h-5 w-5" />
-          <Badge
-            variant="destructive"
-            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs"
-          >
-            {itemCount}
-          </Badge>
-        </Button>
       </div>
 
       {/* Cart Drawer */}
