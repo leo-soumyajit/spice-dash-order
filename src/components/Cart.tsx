@@ -156,9 +156,9 @@ Please confirm this order. Thank you! 🙏`;
 
             {!showAddressForm ? (
               <>
-                <div className="flex-1 min-h-0 overflow-hidden">
-                  <ScrollArea className="h-full px-4 md:px-6">
-                    <div className="space-y-3 py-4">
+                <div className="flex-1 min-h-0">
+                  <div className="h-full overflow-y-auto no-scrollbar px-4 md:px-6">
+                    <div className="space-y-3 py-4 pb-6">
                       {cartItems.map((cartItem, index) => {
                         const price = cartItem.portion === "half" && cartItem.item.half
                           ? cartItem.item.half
@@ -208,10 +208,10 @@ Please confirm this order. Thank you! 🙏`;
                         );
                       })}
                     </div>
-                  </ScrollArea>
+                  </div>
                 </div>
 
-                <DrawerFooter className="border-t pt-3 pb-4 px-4 md:px-6 shrink-0 safe-area-pb">
+                <DrawerFooter className="border-t pt-4 pb-6 px-4 md:px-6 shrink-0 safe-area-pb">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <div>
