@@ -90,14 +90,14 @@ Please confirm this order. Thank you! 🙏`;
 
   return (
     <>
-      {/* Floating Cart Summary - Bottom Bar (Both Mobile & Desktop) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
-        <div className="max-w-7xl mx-auto px-4 pb-4">
-          <div 
+      {/* Zomato-style Bottom Bar (Mobile only, flush to bottom). Hidden when cart is open */}
+      {!isOpen && (
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 pointer-events-none">
+          <div
             onClick={() => setIsOpen(true)}
-            className="bg-primary text-primary-foreground rounded-xl shadow-2xl cursor-pointer hover:scale-[1.02] transition-transform active:scale-[0.98] pointer-events-auto"
+            className="pointer-events-auto bg-primary text-primary-foreground rounded-none shadow-2xl cursor-pointer hover:scale-[1.01] transition-transform active:scale-[0.99]"
           >
-            <div className="px-5 py-3.5 flex items-center justify-between">
+            <div className="px-5 py-3.5 flex items-center justify-between pb-[env(safe-area-inset-bottom)]">
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <ShoppingCart className="h-5 w-5" />
@@ -117,7 +117,7 @@ Please confirm this order. Thank you! 🙏`;
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Cart Drawer */}
       <Drawer open={isOpen} onOpenChange={(open) => {
@@ -125,7 +125,7 @@ Please confirm this order. Thank you! 🙏`;
         if (!open) setShowAddressForm(false);
       }}>
         <DrawerContent className="max-h-[90vh] md:max-h-[85vh]">
-          <div className="mx-auto w-full max-w-2xl">
+          <div className="mx-auto w-full max-w-full md:max-w-2xl px-4 md:px-0">
             <DrawerHeader className="text-left border-b pb-4">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="text-2xl font-bold">
