@@ -10,11 +10,11 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Trash2, Plus, Minus, ChevronUp, X } from "lucide-react";
+import { Trash2, Plus, Minus, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { Badge } from "@/components/ui/badge";
+// removed Badge import (not used)
 import AddressForm from "./AddressForm";
-import { Separator } from "@/components/ui/separator";
+// removed Separator import (not used)
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AddressData {
