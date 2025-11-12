@@ -135,8 +135,8 @@ Please confirm this order. Thank you! 🙏`;
         if (!open) setShowAddressForm(false);
       }}>
         <DrawerContent className="h-[90vh] md:h-[85vh]">
-          <div className="mx-auto w-full max-w-full md:max-w-2xl px-4 md:px-0 flex flex-col h-full">
-            <DrawerHeader className="text-left border-b pb-4">
+          <div className="mx-auto w-full max-w-full md:max-w-2xl flex flex-col h-full">
+            <DrawerHeader className="text-left border-b pb-3 px-4 md:px-6 shrink-0">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="text-2xl font-bold">
                   {showAddressForm ? "Delivery Details" : "Your Cart"}
@@ -156,78 +156,81 @@ Please confirm this order. Thank you! 🙏`;
 
             {!showAddressForm ? (
               <>
-                <ScrollArea className="flex-1 min-h-0 px-4 md:px-6">
-                  <div className="space-y-3 py-4">
-                    {cartItems.map((cartItem, index) => {
-                      const price = cartItem.portion === "half" && cartItem.item.half
-                        ? cartItem.item.half
-                        : cartItem.item.price;
-                      const portionText = cartItem.item.half ? ` (${cartItem.portion === "half" ? "Half" : "Full"})` : '';
-                      
-                      return (
-                        <div key={index} className="flex gap-3 p-4 bg-muted/30 rounded-lg border hover:border-primary/30 transition-colors">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-foreground truncate">
-                              {cartItem.item.name}{portionText}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">₹{price} each</p>
-                            <div className="flex items-center gap-2 mt-3">
+                <div className="flex-1 min-h-0 overflow-hidden">
+                  <ScrollArea className="h-full px-4 md:px-6">
+                    <div className="space-y-3 py-4">
+                      {cartItems.map((cartItem, index) => {
+                        const price = cartItem.portion === "half" && cartItem.item.half
+                          ? cartItem.item.half
+                          : cartItem.item.price;
+                        const portionText = cartItem.item.half ? ` (${cartItem.portion === "half" ? "Half" : "Full"})` : '';
+                        
+                        return (
+                          <div key={index} className="flex gap-3 p-4 bg-muted/30 rounded-lg border hover:border-primary/30 transition-colors">
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-foreground truncate">
+                                {cartItem.item.name}{portionText}
+                              </h3>
+                              <p className="text-sm text-muted-foreground mt-1">₹{price} each</p>
+                              <div className="flex items-center gap-2 mt-3">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-md"
+                                  onClick={() => updateQuantity(index, Math.max(1, cartItem.quantity - 1))}
+                                  disabled={cartItem.quantity <= 1}
+                                >
+                                  <Minus className="h-3 w-3" />
+                                </Button>
+                                <span className="font-semibold w-8 text-center text-sm">{cartItem.quantity}</span>
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  className="h-8 w-8 rounded-md"
+                                  onClick={() => updateQuantity(index, cartItem.quantity + 1)}
+                                >
+                                  <Plus className="h-3 w-3" />
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end justify-between">
                               <Button
-                                variant="outline"
+                                variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 rounded-md"
-                                onClick={() => updateQuantity(index, Math.max(1, cartItem.quantity - 1))}
-                                disabled={cartItem.quantity <= 1}
+                                className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                onClick={() => removeFromCart(index)}
                               >
-                                <Minus className="h-3 w-3" />
+                                <Trash2 className="h-4 w-4" />
                               </Button>
-                              <span className="font-semibold w-8 text-center text-sm">{cartItem.quantity}</span>
-                              <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-8 w-8 rounded-md"
-                                onClick={() => updateQuantity(index, cartItem.quantity + 1)}
-                              >
-                                <Plus className="h-3 w-3" />
-                              </Button>
+                              <p className="font-bold text-primary text-lg whitespace-nowrap">₹{price * cartItem.quantity}</p>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end justify-between">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
-                              onClick={() => removeFromCart(index)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                            <p className="font-bold text-primary text-lg whitespace-nowrap">₹{price * cartItem.quantity}</p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </ScrollArea>
+                        );
+                      })}
+                    </div>
+                  </ScrollArea>
+                </div>
 
-                <DrawerFooter className="border-t pt-4 pb-[env(safe-area-inset-bottom)]">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center px-2">
+                <DrawerFooter className="border-t pt-3 pb-4 px-4 md:px-6 shrink-0 safe-area-pb">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-sm text-muted-foreground">Total Amount</p>
+                        <p className="text-xs text-muted-foreground">Total Amount</p>
                         <p className="text-2xl font-bold text-foreground">₹{totalPrice}</p>
                       </div>
                       <Button
                         variant="ghost"
+                        size="sm"
                         onClick={clearCart}
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Clear Cart
+                        <Trash2 className="h-4 w-4 mr-1" />
+                        Clear
                       </Button>
                     </div>
                     <Button
                       onClick={() => setShowAddressForm(true)}
-                      className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground"
+                      className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
                       size="lg"
                     >
                       Proceed to Order
@@ -236,16 +239,18 @@ Please confirm this order. Thank you! 🙏`;
                 </DrawerFooter>
               </>
             ) : (
-              <div className="flex-1 min-h-0 px-4 md:px-6 py-4">
-                <ScrollArea className="h-full">
-                  <AddressForm
-                    itemName={`${cartItems.length} item${cartItems.length > 1 ? 's' : ''}`}
-                    itemPrice={totalPrice}
-                    quantity={1}
-                    onSubmit={handleAddressSubmit}
-                  />
-                </ScrollArea>
-              </div>
+              <>
+                <div className="flex-1 min-h-0 overflow-hidden px-4 md:px-6 py-4">
+                  <ScrollArea className="h-full">
+                    <AddressForm
+                      itemName={`${cartItems.length} item${cartItems.length > 1 ? 's' : ''}`}
+                      itemPrice={totalPrice}
+                      quantity={1}
+                      onSubmit={handleAddressSubmit}
+                    />
+                  </ScrollArea>
+                </div>
+              </>
             )}
           </div>
         </DrawerContent>
