@@ -5,6 +5,7 @@ import CategoryTabs from "@/components/CategoryTabs";
 import MenuSection from "@/components/MenuSection";
 import MenuItemDialog from "@/components/MenuItemDialog";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/contexts/CartContext";
 import { menuData, categories, MenuItem } from "@/data/menuData";
 
 const Index = () => {
@@ -25,31 +26,33 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navbar allItems={allMenuItems} onItemClick={handleItemClick} />
-      <Hero />
-      <CategoryTabs 
-        categories={categories}
-        activeCategory={activeCategory}
-        onCategoryChange={setActiveCategory}
-      />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <MenuSection 
-          category={activeCategory}
-          items={menuData[activeCategory]}
-          onItemClick={handleItemClick}
+    <CartProvider>
+      <div className="min-h-screen bg-background">
+        <Navbar allItems={allMenuItems} onItemClick={handleItemClick} />
+        <Hero />
+        <CategoryTabs 
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
         />
-      </main>
+        
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+          <MenuSection 
+            category={activeCategory}
+            items={menuData[activeCategory]}
+            onItemClick={handleItemClick}
+          />
+        </main>
 
-      <MenuItemDialog 
-        item={selectedItem}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+        <MenuItemDialog 
+          item={selectedItem}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
+    </CartProvider>
   );
 };
 

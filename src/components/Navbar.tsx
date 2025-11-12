@@ -3,6 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
+import Cart from "./Cart";
 import { MenuItem } from "@/data/menuData";
 
 interface NavbarProps {
@@ -26,12 +27,14 @@ const Navbar = ({ allItems, onItemClick }: NavbarProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
-            <SearchBar allItems={allItems} onItemClick={onItemClick} />
-            <ThemeToggle />
-          </div>
+        <SearchBar allItems={allItems} onItemClick={onItemClick} />
+        <Cart />
+        <ThemeToggle />
+      </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
+            <Cart />
             <SearchBar allItems={allItems} onItemClick={onItemClick} />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
