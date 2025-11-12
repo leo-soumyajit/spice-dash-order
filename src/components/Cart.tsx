@@ -98,12 +98,12 @@ Please confirm this order. Thank you! 🙏`;
               onClick={() => setIsOpen(true)}
               className="w-full bg-primary text-primary-foreground shadow-2xl transition-transform active:scale-[0.99]"
             >
-              <div className="px-5 py-3.5 flex items-center justify-between pb-[env(safe-area-inset-bottom)]">
-                <div className="text-left">
-                  <p className="text-xs font-medium opacity-90">{itemCount} item{itemCount > 1 ? 's' : ''}</p>
-                  <p className="text-base font-bold">₹{totalPrice}</p>
+              <div className="px-4 py-4 flex items-center justify-between gap-3 pb-[env(safe-area-inset-bottom)]">
+                <div className="text-left flex-shrink-0">
+                  <p className="text-[11px] font-medium opacity-90 leading-tight">{itemCount} Item{itemCount > 1 ? 's' : ''}</p>
+                  <p className="text-lg font-bold leading-tight mt-0.5">₹{totalPrice}</p>
                 </div>
-                <span className="text-sm font-semibold">View Cart</span>
+                <span className="text-sm font-semibold whitespace-nowrap">View Cart</span>
               </div>
             </button>
           </div>
