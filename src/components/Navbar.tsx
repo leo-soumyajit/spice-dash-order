@@ -34,6 +34,7 @@ const Navbar = ({ allItems, onItemClick }: NavbarProps) => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
+            <Cart />
             <SearchBar allItems={allItems} onItemClick={onItemClick} />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
