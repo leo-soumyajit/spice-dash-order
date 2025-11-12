@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MessageCircle, MapPin, User, Phone, FileText } from "lucide-react";
+import LocationPicker from "./LocationPicker";
+import { useState } from "react";
 
 const addressFormSchema = z.object({
   name: z.string()
@@ -30,6 +32,11 @@ const addressFormSchema = z.object({
     .trim()
     .max(200, { message: "Instructions must be less than 200 characters" })
     .optional(),
+  location: z.object({
+    lat: z.number(),
+    lng: z.number(),
+    address: z.string(),
+  }).optional(),
 });
 
 type AddressFormValues = z.infer<typeof addressFormSchema>;
@@ -41,6 +48,12 @@ interface AddressFormProps {
 }
 
 const AddressForm = ({ itemName, itemPrice, onSubmit }: AddressFormProps) => {
+  const [selectedLocation, setSelectedLocation] = useState<{
+    lat: number;
+    lng: number;
+    address: string;
+  }>();
+
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressFormSchema),
     defaultValues: {
@@ -48,8 +61,14 @@ const AddressForm = ({ itemName, itemPrice, onSubmit }: AddressFormProps) => {
       phone: "",
       address: "",
       instructions: "",
+      location: undefined,
     },
   });
+
+  const handleLocationSelect = (location: { lat: number; lng: number; address: string }) => {
+    setSelectedLocation(location);
+    form.setValue("location", location);
+  };
 
   return (
     <div className="space-y-4">
@@ -126,6 +145,11 @@ const AddressForm = ({ itemName, itemPrice, onSubmit }: AddressFormProps) => {
                 <FormMessage />
               </FormItem>
             )}
+          />
+
+          <LocationPicker
+            onLocationSelect={handleLocationSelect}
+            selectedLocation={selectedLocation}
           />
 
           <FormField

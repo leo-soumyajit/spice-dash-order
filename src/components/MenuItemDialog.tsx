@@ -39,6 +39,11 @@ interface AddressData {
   phone: string;
   address: string;
   instructions?: string;
+  location?: {
+    lat: number;
+    lng: number;
+    address: string;
+  };
 }
 
 const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
@@ -53,6 +58,11 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
   const handleAddressSubmit = (data: AddressData) => {
     const phoneNumber = "917908288829";
     
+    // Create Google Maps link if location is available
+    const locationLink = data.location 
+      ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
+      : '';
+    
     const message = `🍽️ *New Order Request*
 
 📦 *Item:* ${item.name}
@@ -64,6 +74,7 @@ Phone: ${data.phone}
 
 📍 *Delivery Address:*
 ${data.address}
+${data.location ? `\n📌 *Exact Location:*\n${data.location.address}\n\n🗺️ *Map Link:*\n${locationLink}` : ''}
 
 ${data.instructions ? `📝 *Special Instructions:*\n${data.instructions}\n` : ''}
 Please confirm this order. Thank you! 🙏`;
