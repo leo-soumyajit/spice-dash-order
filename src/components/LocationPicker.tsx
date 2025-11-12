@@ -24,7 +24,7 @@ const LocationPicker = ({ onLocationSelect, selectedLocation }: LocationPickerPr
     // Initialize map
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v12",
+      style: "mapbox://styles/mapbox/streets-v11",
       center: [77.5946, 12.9716], // Bangalore, India as default
       zoom: 12,
     });

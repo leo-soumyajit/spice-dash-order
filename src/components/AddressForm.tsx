@@ -44,10 +44,11 @@ type AddressFormValues = z.infer<typeof addressFormSchema>;
 interface AddressFormProps {
   itemName: string;
   itemPrice: number;
+  quantity: number;
   onSubmit: (data: AddressFormValues) => void;
 }
 
-const AddressForm = ({ itemName, itemPrice, onSubmit }: AddressFormProps) => {
+const AddressForm = ({ itemName, itemPrice, quantity, onSubmit }: AddressFormProps) => {
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
     lng: number;
@@ -74,9 +75,15 @@ const AddressForm = ({ itemName, itemPrice, onSubmit }: AddressFormProps) => {
     <div className="space-y-4">
       <div className="bg-muted/50 rounded-lg p-4 border-2 border-primary/20">
         <h3 className="font-semibold text-foreground mb-2">Order Summary</h3>
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">{itemName}</span>
-          <span className="text-xl font-bold text-primary">₹{itemPrice}</span>
+        <div className="space-y-1">
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">{itemName}</span>
+            <span className="text-sm text-muted-foreground">₹{itemPrice} × {quantity}</span>
+          </div>
+          <div className="flex justify-between items-center pt-2 border-t border-border">
+            <span className="font-semibold text-foreground">Total</span>
+            <span className="text-xl font-bold text-primary">₹{itemPrice * quantity}</span>
+          </div>
         </div>
       </div>
 

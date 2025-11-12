@@ -48,6 +48,7 @@ interface AddressData {
 
 const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   if (!item) return null;
 
@@ -63,10 +64,14 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
       ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
       : '';
     
+    const totalPrice = item.price * quantity;
+    
     const message = `🍽️ *New Order Request*
 
 📦 *Item:* ${item.name}
-💰 *Price:* ₹${item.price}${item.half ? ` (Half: ₹${item.half})` : ''}
+🔢 *Quantity:* ${quantity}
+💰 *Price per item:* ₹${item.price}${item.half ? ` (Half: ₹${item.half})` : ''}
+💵 *Total:* ₹${totalPrice}
 
 👤 *Customer Details:*
 Name: ${data.name}
@@ -89,6 +94,7 @@ Please confirm this order. Thank you! 🙏`;
     setTimeout(() => {
       onOpenChange(false);
       setShowAddressForm(false);
+      setQuantity(1);
     }, 500);
   };
 
@@ -103,6 +109,7 @@ Please confirm this order. Thank you! 🙏`;
       onOpenChange(isOpen);
       if (!isOpen) {
         setShowAddressForm(false);
+        setQuantity(1);
       }
     }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -139,7 +146,7 @@ Please confirm this order. Thank you! 🙏`;
             </DialogDescription>
 
             <div className="flex items-baseline gap-3 pt-2">
-              <span className="text-4xl font-bold text-primary">₹{item.price}</span>
+              <span className="text-4xl font-bold text-primary">₹{item.price * quantity}</span>
               {item.half && (
                 <span className="text-lg text-muted-foreground">
                   (Half: ₹{item.half})
@@ -147,17 +154,43 @@ Please confirm this order. Thank you! 🙏`;
               )}
             </div>
 
-            <Button
-              onClick={handleOrderClick}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105"
-            >
-              Proceed to Order
-            </Button>
+            <div className="flex gap-3 items-stretch">
+              <Button
+                onClick={handleOrderClick}
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105"
+              >
+                Proceed to Order
+              </Button>
+              
+              <div className="flex items-center gap-2 border-2 border-primary/20 rounded-xl px-3 bg-muted/30">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                  className="h-auto p-2 hover:bg-primary/10"
+                >
+                  <span className="text-xl font-bold text-primary">−</span>
+                </Button>
+                <span className="text-xl font-bold text-foreground min-w-[2rem] text-center">
+                  {quantity}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="h-auto p-2 hover:bg-primary/10"
+                >
+                  <span className="text-xl font-bold text-primary">+</span>
+                </Button>
+              </div>
+            </div>
           </div>
         ) : (
           <AddressForm
             itemName={item.name}
             itemPrice={item.price}
+            quantity={quantity}
             onSubmit={handleAddressSubmit}
           />
         )}
