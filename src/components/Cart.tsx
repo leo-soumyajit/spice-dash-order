@@ -240,15 +240,15 @@ Please confirm this order. Thank you! 🙏`;
               </>
             ) : (
               <>
-                <div className="flex-1 min-h-0 overflow-hidden px-4 md:px-6 py-4">
-                  <ScrollArea className="h-full">
+                <div className="flex-1 min-h-0 px-4 md:px-6 py-4">
+                  <div className="h-full overflow-y-auto no-scrollbar">
                     <AddressForm
                       itemName={`${cartItems.length} item${cartItems.length > 1 ? 's' : ''}`}
                       itemPrice={totalPrice}
                       quantity={1}
                       onSubmit={handleAddressSubmit}
                     />
-                  </ScrollArea>
+                  </div>
                 </div>
               </>
             )}
