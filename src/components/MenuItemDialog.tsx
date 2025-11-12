@@ -39,7 +39,8 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
     const message = `Hi! I want to order ${item.name} - ₹${item.price}. Please confirm availability.`;
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-    window.open(whatsappUrl, "_blank");
+    // Use location.href for better compatibility in iframes
+    window.location.href = whatsappUrl;
   };
 
   const imageSrc = imageMap[item.image] || chickenCurry;
