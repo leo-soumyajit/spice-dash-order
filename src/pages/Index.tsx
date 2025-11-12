@@ -5,6 +5,7 @@ import CategoryTabs from "@/components/CategoryTabs";
 import MenuSection from "@/components/MenuSection";
 import MenuItemDialog from "@/components/MenuItemDialog";
 import Footer from "@/components/Footer";
+import Cart from "@/components/Cart";
 import { CartProvider } from "@/contexts/CartContext";
 import { menuData, categories, MenuItem } from "@/data/menuData";
 
@@ -51,6 +52,7 @@ const Index = () => {
         />
 
         <Footer />
+        <Cart />
       </div>
     </CartProvider>
   );

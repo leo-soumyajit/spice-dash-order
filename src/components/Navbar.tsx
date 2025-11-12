@@ -3,7 +3,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
-import Cart from "./Cart";
+
 import { MenuItem } from "@/data/menuData";
 
 interface NavbarProps {
@@ -62,8 +62,6 @@ const Navbar = ({ allItems, onItemClick }: NavbarProps) => {
         </div>
       </div>
       
-      {/* Cart Component - Handles its own visibility */}
-      <Cart />
     </nav>
   );
 };
