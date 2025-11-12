@@ -91,14 +91,14 @@ Please confirm this order. Thank you! 🙏`;
       {/* Zomato-style Bottom Bar - Flush to bottom on mobile, centered pill on desktop */}
       {!isOpen && (
         <>
-          {/* Mobile - Full width bar at bottom */}
-          <div className="md:hidden fixed inset-x-0 bottom-0 z-50">
+          {/* Mobile - Centered pill with spacing from bottom */}
+          <div className="md:hidden fixed inset-x-0 bottom-4 z-50 px-4 pointer-events-none">
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="w-full bg-primary text-primary-foreground shadow-2xl transition-transform active:scale-[0.99]"
+              className="pointer-events-auto w-full max-w-xl mx-auto mb-[env(safe-area-inset-bottom)] bg-primary text-primary-foreground rounded-full shadow-2xl hover:scale-[1.01] transition-transform"
             >
-              <div className="px-4 py-4 flex items-center justify-between gap-3 pb-[env(safe-area-inset-bottom)]">
+              <div className="px-5 py-3.5 flex items-center justify-between gap-3">
                 <div className="text-left flex-shrink-0">
                   <p className="text-[11px] font-medium opacity-90 leading-tight">{itemCount} Item{itemCount > 1 ? 's' : ''}</p>
                   <p className="text-lg font-bold leading-tight mt-0.5">₹{totalPrice}</p>
