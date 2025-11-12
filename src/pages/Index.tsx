@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import CategoryTabs from "@/components/CategoryTabs";
 import MenuSection from "@/components/MenuSection";
@@ -11,6 +12,13 @@ const Index = () => {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  // Flatten all menu items for search
+  const allMenuItems = useMemo(() => {
+    return Object.entries(menuData).flatMap(([category, items]) =>
+      items.map(item => ({ item, category }))
+    );
+  }, []);
+
   const handleItemClick = (item: MenuItem) => {
     setSelectedItem(item);
     setDialogOpen(true);
@@ -18,6 +26,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar allItems={allMenuItems} onItemClick={handleItemClick} />
       <Hero />
       <CategoryTabs 
         categories={categories}
@@ -25,7 +34,7 @@ const Index = () => {
         onCategoryChange={setActiveCategory}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         <MenuSection 
           category={activeCategory}
           items={menuData[activeCategory]}
