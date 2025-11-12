@@ -4,6 +4,8 @@ import { MenuItem } from "@/data/menuData";
 import { ArrowLeft } from "lucide-react";
 import AddressForm from "./AddressForm";
 import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 // Import all images
 import chickenCurry from "@/assets/chicken-curry.jpg";
@@ -49,6 +51,7 @@ interface AddressData {
 const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const [portion, setPortion] = useState<"full" | "half">("full");
 
   if (!item) return null;
 
@@ -64,13 +67,15 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
       ? `https://www.google.com/maps?q=${data.location.lat},${data.location.lng}`
       : '';
     
-    const totalPrice = item.price * quantity;
+    const pricePerItem = portion === "half" && item.half ? item.half : item.price;
+    const totalPrice = pricePerItem * quantity;
+    const portionText = portion === "half" ? " (Half)" : " (Full)";
     
     const message = `🍽️ *New Order Request*
 
-📦 *Item:* ${item.name}
+📦 *Item:* ${item.name}${item.half ? portionText : ''}
 🔢 *Quantity:* ${quantity}
-💰 *Price per item:* ₹${item.price}${item.half ? ` (Half: ₹${item.half})` : ''}
+💰 *Price per item:* ₹${pricePerItem}
 💵 *Total:* ₹${totalPrice}
 
 👤 *Customer Details:*
@@ -110,6 +115,7 @@ Please confirm this order. Thank you! 🙏`;
       if (!isOpen) {
         setShowAddressForm(false);
         setQuantity(1);
+        setPortion("full");
       }
     }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -145,13 +151,30 @@ Please confirm this order. Thank you! 🙏`;
               {item.description}
             </DialogDescription>
 
+            {item.half && (
+              <div className="space-y-3 p-4 bg-muted/30 rounded-xl border-2 border-primary/10">
+                <Label className="text-sm font-semibold text-foreground">Select Portion Size</Label>
+                <RadioGroup value={portion} onValueChange={(value) => setPortion(value as "full" | "half")} className="flex gap-4">
+                  <div className="flex items-center space-x-2 flex-1">
+                    <RadioGroupItem value="full" id="full" />
+                    <Label htmlFor="full" className="cursor-pointer flex-1 text-sm">
+                      Full - ₹{item.price}
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 flex-1">
+                    <RadioGroupItem value="half" id="half" />
+                    <Label htmlFor="half" className="cursor-pointer flex-1 text-sm">
+                      Half - ₹{item.half}
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            )}
+
             <div className="flex items-baseline gap-3 pt-2">
-              <span className="text-4xl font-bold text-primary">₹{item.price * quantity}</span>
-              {item.half && (
-                <span className="text-lg text-muted-foreground">
-                  (Half: ₹{item.half})
-                </span>
-              )}
+              <span className="text-4xl font-bold text-primary">
+                ₹{(portion === "half" && item.half ? item.half : item.price) * quantity}
+              </span>
             </div>
 
             <div className="flex gap-3 items-stretch">
@@ -189,7 +212,7 @@ Please confirm this order. Thank you! 🙏`;
         ) : (
           <AddressForm
             itemName={item.name}
-            itemPrice={item.price}
+            itemPrice={portion === "half" && item.half ? item.half : item.price}
             quantity={quantity}
             onSubmit={handleAddressSubmit}
           />
