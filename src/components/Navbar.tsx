@@ -26,9 +26,10 @@ const Navbar = ({ allItems, onItemClick }: NavbarProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-4">
-            <SearchBar allItems={allItems} onItemClick={onItemClick} />
-            <ThemeToggle />
-          </div>
+        <SearchBar allItems={allItems} onItemClick={onItemClick} />
+        <Cart />
+        <ThemeToggle />
+      </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
