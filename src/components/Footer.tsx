@@ -25,7 +25,7 @@ const Footer = () => {
               </a>
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-primary-foreground/90">Your Address Here</span>
+                <span className="text-sm text-primary-foreground/90">Khudiram Nagar, Haldia</span>
               </div>
             </div>
           </div>
