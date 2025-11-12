@@ -134,8 +134,8 @@ Please confirm this order. Thank you! 🙏`;
         setIsOpen(open);
         if (!open) setShowAddressForm(false);
       }}>
-        <DrawerContent className="max-h-[90vh] md:max-h-[85vh]">
-          <div className="mx-auto w-full max-w-full md:max-w-2xl px-4 md:px-0">
+        <DrawerContent className="h-[90vh] md:h-[85vh]">
+          <div className="mx-auto w-full max-w-full md:max-w-2xl px-4 md:px-0 flex flex-col h-full">
             <DrawerHeader className="text-left border-b pb-4">
               <div className="flex items-center justify-between">
                 <DrawerTitle className="text-2xl font-bold">
@@ -156,7 +156,7 @@ Please confirm this order. Thank you! 🙏`;
 
             {!showAddressForm ? (
               <>
-                <ScrollArea className="h-[calc(90vh-240px)] md:h-[calc(85vh-220px)] px-4 md:px-6">
+                <ScrollArea className="flex-1 min-h-0 px-4 md:px-6">
                   <div className="space-y-3 py-4">
                     {cartItems.map((cartItem, index) => {
                       const price = cartItem.portion === "half" && cartItem.item.half
@@ -209,7 +209,7 @@ Please confirm this order. Thank you! 🙏`;
                   </div>
                 </ScrollArea>
 
-                <DrawerFooter className="border-t pt-4">
+                <DrawerFooter className="border-t pt-4 pb-[env(safe-area-inset-bottom)]">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center px-2">
                       <div>
@@ -236,8 +236,8 @@ Please confirm this order. Thank you! 🙏`;
                 </DrawerFooter>
               </>
             ) : (
-              <div className="px-4 md:px-6 py-4">
-                <ScrollArea className="h-[calc(90vh-140px)] md:h-[calc(85vh-140px)]">
+              <div className="flex-1 min-h-0 px-4 md:px-6 py-4">
+                <ScrollArea className="h-full">
                   <AddressForm
                     itemName={`${cartItems.length} item${cartItems.length > 1 ? 's' : ''}`}
                     itemPrice={totalPrice}
