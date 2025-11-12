@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { MenuItem } from "@/data/menuData";
-import { MessageCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import AddressForm from "./AddressForm";
+import { Button } from "@/components/ui/button";
 
 // Import all images
 import chickenCurry from "@/assets/chicken-curry.jpg";
@@ -31,59 +34,122 @@ const imageMap: Record<string, string> = {
   "chowmein": chowmein,
 };
 
+interface AddressData {
+  name: string;
+  phone: string;
+  address: string;
+  instructions?: string;
+}
+
 const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
+  const [showAddressForm, setShowAddressForm] = useState(false);
+
   if (!item) return null;
 
-  const handleWhatsAppOrder = () => {
+  const handleOrderClick = () => {
+    setShowAddressForm(true);
+  };
+
+  const handleAddressSubmit = (data: AddressData) => {
     const phoneNumber = "917908288829";
-    const message = `Hi! I want to order ${item.name} - ₹${item.price}. Please confirm availability.`;
+    
+    const message = `🍽️ *New Order Request*
+
+📦 *Item:* ${item.name}
+💰 *Price:* ₹${item.price}${item.half ? ` (Half: ₹${item.half})` : ''}
+
+👤 *Customer Details:*
+Name: ${data.name}
+Phone: ${data.phone}
+
+📍 *Delivery Address:*
+${data.address}
+
+${data.instructions ? `📝 *Special Instructions:*\n${data.instructions}\n` : ''}
+Please confirm this order. Thank you! 🙏`;
+
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
-    // Use location.href for better compatibility in iframes
+    
+    // Redirect to WhatsApp
     window.location.href = whatsappUrl;
+    
+    // Close the dialog after a short delay
+    setTimeout(() => {
+      onOpenChange(false);
+      setShowAddressForm(false);
+    }, 500);
+  };
+
+  const handleBackClick = () => {
+    setShowAddressForm(false);
   };
 
   const imageSrc = imageMap[item.image] || chickenCurry;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={(isOpen) => {
+      onOpenChange(isOpen);
+      if (!isOpen) {
+        setShowAddressForm(false);
+      }
+    }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-foreground">
-            {item.name}
-          </DialogTitle>
+          <div className="flex items-center gap-2">
+            {showAddressForm && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleBackClick}
+                className="hover:bg-muted"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            )}
+            <DialogTitle className="text-2xl font-bold text-foreground">
+              {showAddressForm ? "Delivery Details" : item.name}
+            </DialogTitle>
+          </div>
         </DialogHeader>
         
-        <div className="space-y-4">
-          <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden shadow-lg">
-            <img 
-              src={imageSrc} 
-              alt={item.name}
-              className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-            />
+        {!showAddressForm ? (
+          <div className="space-y-4">
+            <div className="relative w-full h-64 md:h-80 rounded-xl overflow-hidden shadow-lg">
+              <img 
+                src={imageSrc} 
+                alt={item.name}
+                className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+
+            <DialogDescription className="text-base text-foreground/80 leading-relaxed">
+              {item.description}
+            </DialogDescription>
+
+            <div className="flex items-baseline gap-3 pt-2">
+              <span className="text-4xl font-bold text-primary">₹{item.price}</span>
+              {item.half && (
+                <span className="text-lg text-muted-foreground">
+                  (Half: ₹{item.half})
+                </span>
+              )}
+            </div>
+
+            <Button
+              onClick={handleOrderClick}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105"
+            >
+              Proceed to Order
+            </Button>
           </div>
-
-          <DialogDescription className="text-base text-foreground/80 leading-relaxed">
-            {item.description}
-          </DialogDescription>
-
-          <div className="flex items-baseline gap-3 pt-2">
-            <span className="text-4xl font-bold text-primary">₹{item.price}</span>
-            {item.half && (
-              <span className="text-lg text-muted-foreground">
-                (Half: ₹{item.half})
-              </span>
-            )}
-          </div>
-
-          <button
-            onClick={handleWhatsAppOrder}
-            className="w-full bg-whatsapp hover:bg-whatsapp/90 text-white font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all duration-300 hover:shadow-xl hover:scale-105"
-          >
-            <MessageCircle className="w-6 h-6" />
-            Order via WhatsApp
-          </button>
-        </div>
+        ) : (
+          <AddressForm
+            itemName={item.name}
+            itemPrice={item.price}
+            onSubmit={handleAddressSubmit}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
