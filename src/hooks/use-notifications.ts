@@ -108,10 +108,10 @@ export const useNotifications = () => {
 
     if (cartItems.length > 0 && cartTimestamp) {
       const timeInCart = Date.now() - parseInt(cartTimestamp);
-      const thirtyMinutes = 30 * 60 * 1000;
+      const fiveMinutes = 5 * 60 * 1000;
 
-      // Send reminder after 30 minutes if not already sent
-      if (timeInCart > thirtyMinutes && reminderSent !== cartTimestamp) {
+      // Send reminder after 5 minutes if not already sent
+      if (timeInCart > fiveMinutes && reminderSent !== cartTimestamp) {
         sendNotification(
           '🛒 Your Cart is Waiting!',
           `You have ${cartItems.length} delicious item${cartItems.length > 1 ? 's' : ''} in your cart. Complete your order now!`
