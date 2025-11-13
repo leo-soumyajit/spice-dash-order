@@ -9,11 +9,12 @@ export const NotificationBanner = () => {
   const { requestPermission, permission, isSupported, sendNotification } = useNotifications();
 
   useEffect(() => {
-    // Show banner if notifications are supported and permission is not granted
-    if (isSupported && permission === 'default') {
-      const timer = setTimeout(() => setShow(true), 2000);
-      return () => clearTimeout(timer);
-    }
+    if (!isSupported) return;
+    if (permission !== 'default') return;
+    if (localStorage.getItem('notification_banner_dismissed') === 'true') return;
+
+    const timer = setTimeout(() => setShow(true), 1500);
+    return () => clearTimeout(timer);
   }, [isSupported, permission]);
 
   const handleEnable = async () => {
