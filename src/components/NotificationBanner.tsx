@@ -32,25 +32,29 @@ export const NotificationBanner = () => {
   }
 
   return (
-    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top duration-300">
-      <div className="bg-primary text-primary-foreground px-6 py-3 rounded-full shadow-lg flex items-center gap-3 max-w-md">
-        <Bell className="w-5 h-5 animate-pulse" />
-        <p className="text-sm font-medium">Get notified about daily meal deals & special offers!</p>
-        <div className="flex items-center gap-2 ml-2">
+    <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-top duration-300 px-4 max-w-md w-full">
+      <div className="bg-primary text-primary-foreground px-4 sm:px-6 py-3 rounded-2xl shadow-lg">
+        <div className="flex items-start gap-3">
+          <Bell className="w-5 h-5 animate-pulse flex-shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium leading-snug">Get notified about daily meal deals & special offers!</p>
+          </div>
+          <button
+            onClick={handleDismiss}
+            className="text-primary-foreground/80 hover:text-primary-foreground transition-colors flex-shrink-0"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="mt-3 flex justify-end">
           <Button
             size="sm"
             variant="secondary"
             onClick={handleEnable}
-            className="h-7 text-xs rounded-full"
+            className="h-8 text-xs rounded-full px-4"
           >
-            Enable
+            Enable Notifications
           </Button>
-          <button
-            onClick={handleDismiss}
-            className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </div>
