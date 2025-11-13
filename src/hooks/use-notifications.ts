@@ -133,32 +133,43 @@ export const useNotifications = () => {
     }
   }, [cartItems.length, sendNotification]);
 
-  // Track when items are added to cart
+  // Track last cart activity: update timestamp on every cart content change
   useEffect(() => {
     if (cartItems.length > 0) {
-      const existingTimestamp = localStorage.getItem(STORAGE_KEYS.CART_TIMESTAMP);
-      if (!existingTimestamp) {
-        localStorage.setItem(STORAGE_KEYS.CART_TIMESTAMP, Date.now().toString());
-      }
+      // Update last activity timestamp and reset reminder flag
+      const now = Date.now().toString();
+      localStorage.setItem(STORAGE_KEYS.CART_TIMESTAMP, now);
+      localStorage.removeItem(STORAGE_KEYS.CART_REMINDER);
     } else {
-      // Clear cart tracking when cart is empty
+      // Clear when cart is empty
       localStorage.removeItem(STORAGE_KEYS.CART_TIMESTAMP);
       localStorage.removeItem(STORAGE_KEYS.CART_REMINDER);
     }
-  }, [cartItems.length]);
+  }, [JSON.stringify(cartItems)]);
 
-  // Check notifications every 30 seconds for more responsive cart notifications
+  // Poll checks (every 10s) + run immediately and on resume/focus
   useEffect(() => {
-    const interval = setInterval(() => {
+    const tick = () => {
       checkScheduledNotifications();
       checkCartAbandonment();
-    }, 30000); // Check every 30 seconds
+    };
 
-    // Check immediately on mount
-    checkScheduledNotifications();
-    checkCartAbandonment();
+    const interval = setInterval(tick, 10000);
+    tick();
 
-    return () => clearInterval(interval);
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') tick();
+    };
+    const onFocus = () => tick();
+
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('focus', onFocus);
+    };
   }, [checkScheduledNotifications, checkCartAbandonment]);
 
   // Auto-request permission on first visit
