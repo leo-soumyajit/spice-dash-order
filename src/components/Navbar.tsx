@@ -3,7 +3,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
-import { NotificationSettings } from "./NotificationSettings";
 
 import { MenuItem } from "@/data/menuData";
 
@@ -53,11 +52,10 @@ const Navbar = ({ allItems, onItemClick }: NavbarProps) => {
         <div
           className={cn(
             "md:hidden overflow-hidden transition-all duration-300",
-            mobileMenuOpen ? "max-h-32 pb-4" : "max-h-0"
+            mobileMenuOpen ? "max-h-20 pb-4" : "max-h-0"
           )}
         >
-          <div className="space-y-2 pt-2">
-            <NotificationSettings />
+          <div className="pt-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Theme</span>
               <ThemeToggle />
