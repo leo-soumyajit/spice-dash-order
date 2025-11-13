@@ -65,13 +65,22 @@ export const useNotifications = () => {
 
   const sendNotification = useCallback((title: string, body: string, icon?: string) => {
     if (Notification.permission === 'granted') {
-      new Notification(title, {
+      // Play notification sound
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDbF6/CFMAYAAAAAA');
+      audio.volume = 0.3;
+      audio.play().catch(() => {}); // Ignore errors if sound fails
+      
+      const notification = new Notification(title, {
         body,
         icon: icon || '/favicon.png',
         badge: '/favicon.png',
         tag: 'food-delivery',
         requireInteraction: false,
+        silent: false,
       });
+      
+      // Auto-close notification after 6 seconds
+      setTimeout(() => notification.close(), 6000);
     }
   }, []);
 
@@ -110,8 +119,11 @@ export const useNotifications = () => {
       const timeInCart = Date.now() - parseInt(cartTimestamp);
       const fiveMinutes = 5 * 60 * 1000;
 
+      console.log('Cart check:', { timeInCart, fiveMinutes, reminderSent, cartTimestamp });
+
       // Send reminder after 5 minutes if not already sent
       if (timeInCart > fiveMinutes && reminderSent !== cartTimestamp) {
+        console.log('Sending cart abandonment notification');
         sendNotification(
           '🛒 Your Cart is Waiting!',
           `You have ${cartItems.length} delicious item${cartItems.length > 1 ? 's' : ''} in your cart. Complete your order now!`
@@ -135,12 +147,12 @@ export const useNotifications = () => {
     }
   }, [cartItems.length]);
 
-  // Check notifications every minute
+  // Check notifications every 30 seconds for more responsive cart notifications
   useEffect(() => {
     const interval = setInterval(() => {
       checkScheduledNotifications();
       checkCartAbandonment();
-    }, 60000); // Check every minute
+    }, 30000); // Check every 30 seconds
 
     // Check immediately on mount
     checkScheduledNotifications();
@@ -163,6 +175,7 @@ export const useNotifications = () => {
   return {
     requestPermission,
     sendNotification,
+    checkCartAbandonment,
     isSupported: 'Notification' in window,
     permission: 'Notification' in window ? Notification.permission : 'denied',
   };
