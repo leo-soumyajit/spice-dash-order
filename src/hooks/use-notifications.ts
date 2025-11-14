@@ -63,25 +63,41 @@ export const useNotifications = () => {
     return false;
   }, []);
 
-  const sendNotification = useCallback((title: string, body: string, icon?: string) => {
-    if (Notification.permission === 'granted') {
-      // Play notification sound
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDbF6/CFMAYAAAAAA');
-      audio.volume = 0.3;
-      audio.play().catch(() => {}); // Ignore errors if sound fails
-      
-      const notification = new Notification(title, {
-        body,
-        icon: icon || '/favicon.png',
-        badge: '/favicon.png',
-        tag: 'food-delivery',
-        requireInteraction: false,
-        silent: false,
-      });
-      
-      // Auto-close notification after 6 seconds
-      setTimeout(() => notification.close(), 6000);
+  const sendNotification = useCallback(async (title: string, body: string, icon?: string) => {
+    if (Notification.permission !== 'granted') return;
+
+    // Play notification sound
+    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBDbF6/CFMAYAAAAAA');
+    audio.volume = 0.3;
+    audio.play().catch(() => {});
+
+    // Use Service Worker for notifications if available (works on mobile/PWA)
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      try {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'SHOW_NOTIFICATION',
+          title,
+          body,
+          icon: icon || '/favicon.png',
+          tag: 'food-delivery'
+        });
+        return;
+      } catch (error) {
+        console.log('Service Worker notification failed, falling back to regular notification');
+      }
     }
+
+    // Fallback to regular notification for desktop
+    const notification = new Notification(title, {
+      body,
+      icon: icon || '/favicon.png',
+      badge: '/favicon.png',
+      tag: 'food-delivery',
+      requireInteraction: false,
+      silent: false,
+    });
+    
+    setTimeout(() => notification.close(), 6000);
   }, []);
 
   const checkScheduledNotifications = useCallback(() => {
