@@ -71,23 +71,25 @@ export const useNotifications = () => {
     audio.volume = 0.3;
     audio.play().catch(() => {});
 
-    // Use Service Worker for notifications if available (works on mobile/PWA)
-    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    // Use Service Worker registration for notifications (works on mobile/PWA/desktop)
+    if ('serviceWorker' in navigator) {
       try {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'SHOW_NOTIFICATION',
-          title,
+        const registration = await navigator.serviceWorker.ready;
+        await registration.showNotification(title, {
           body,
           icon: icon || '/favicon.png',
-          tag: 'food-delivery'
+          badge: '/favicon.png',
+          tag: 'food-delivery',
+          requireInteraction: false,
+          silent: false,
         });
         return;
       } catch (error) {
-        console.log('Service Worker notification failed, falling back to regular notification');
+        console.log('Service Worker notification failed:', error);
       }
     }
 
-    // Fallback to regular notification for desktop
+    // Fallback to regular notification
     const notification = new Notification(title, {
       body,
       icon: icon || '/favicon.png',
