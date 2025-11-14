@@ -117,12 +117,12 @@ export const useNotifications = () => {
 
     if (cartItems.length > 0 && cartTimestamp) {
       const timeInCart = Date.now() - parseInt(cartTimestamp);
-      const fiveMinutes = 5 * 60 * 1000;
+      const oneMinute = 1 * 60 * 1000;
 
-      console.log('Cart check:', { timeInCart, fiveMinutes, reminderSent, cartTimestamp });
+      console.log('Cart check:', { timeInCart, oneMinute, reminderSent, cartTimestamp });
 
-      // Send reminder after 5 minutes if not already sent
-      if (timeInCart > fiveMinutes && reminderSent !== cartTimestamp) {
+      // Send reminder after 1 minute if not already sent
+      if (timeInCart > oneMinute && reminderSent !== cartTimestamp) {
         console.log('Sending cart abandonment notification');
         sendNotification(
           '🛒 Your Cart is Waiting!',
