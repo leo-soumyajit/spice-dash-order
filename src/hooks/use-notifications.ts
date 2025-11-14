@@ -109,20 +109,20 @@ export const useNotifications = () => {
     const currentHour = now.getHours();
     const currentMinute = now.getMinutes();
     const today = now.toDateString();
-    const lastSent = localStorage.getItem(STORAGE_KEYS.LAST_NOTIFICATION);
 
     NOTIFICATION_SCHEDULES.forEach((schedule) => {
-      const notificationKey = `${today}-${schedule.id}`;
+      const notificationKey = `notification_${schedule.id}_${today}`;
+      const alreadySent = localStorage.getItem(notificationKey);
       
       // Check if it's time for this notification and we haven't sent it today
       if (
         currentHour === schedule.hour &&
         currentMinute >= schedule.minute &&
         currentMinute < schedule.minute + 5 && // 5-minute window
-        lastSent !== notificationKey
+        !alreadySent
       ) {
         sendNotification(schedule.title, schedule.body, schedule.icon);
-        localStorage.setItem(STORAGE_KEYS.LAST_NOTIFICATION, notificationKey);
+        localStorage.setItem(notificationKey, 'sent');
       }
     });
   }, [sendNotification]);
