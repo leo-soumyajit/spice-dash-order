@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { MenuItem } from "@/data/menuData";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
+import { useRestaurantHours } from "@/hooks/use-restaurant-hours";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Import all images
 import chickenCurry from "@/assets/chicken-curry.jpg";
@@ -42,6 +44,7 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
   const [portion, setPortion] = useState<"full" | "half">("full");
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const { isOpen: isRestaurantOpen, nextOpenTime, openingHours } = useRestaurantHours();
 
   if (!item) return null;
 
@@ -86,19 +89,33 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
               {item.description}
             </DialogDescription>
 
+            {!isRestaurantOpen && (
+              <Alert className="bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800">
+                <Clock className="h-4 w-4 text-red-600 dark:text-red-400" />
+                <AlertDescription className="text-red-800 dark:text-red-200 font-medium">
+                  Restaurant is currently closed. We open at {nextOpenTime}. Regular hours: {openingHours}
+                </AlertDescription>
+              </Alert>
+            )}
+
             {item.half && (
               <div className="space-y-3 p-4 bg-muted/30 rounded-xl border-2 border-primary/10">
                 <Label className="text-sm font-semibold text-foreground">Select Portion Size</Label>
-                <RadioGroup value={portion} onValueChange={(value) => setPortion(value as "full" | "half")} className="flex gap-4">
+                <RadioGroup 
+                  value={portion} 
+                  onValueChange={(value) => setPortion(value as "full" | "half")} 
+                  className="flex gap-4"
+                  disabled={!isRestaurantOpen}
+                >
                   <div className="flex items-center space-x-2 flex-1">
-                    <RadioGroupItem value="full" id="full" />
-                    <Label htmlFor="full" className="cursor-pointer flex-1 text-sm">
+                    <RadioGroupItem value="full" id="full" disabled={!isRestaurantOpen} />
+                    <Label htmlFor="full" className={`cursor-pointer flex-1 text-sm ${!isRestaurantOpen ? 'opacity-50' : ''}`}>
                       Full - ₹{item.price}
                     </Label>
                   </div>
                   <div className="flex items-center space-x-2 flex-1">
-                    <RadioGroupItem value="half" id="half" />
-                    <Label htmlFor="half" className="cursor-pointer flex-1 text-sm">
+                    <RadioGroupItem value="half" id="half" disabled={!isRestaurantOpen} />
+                    <Label htmlFor="half" className={`cursor-pointer flex-1 text-sm ${!isRestaurantOpen ? 'opacity-50' : ''}`}>
                       Half - ₹{item.half}
                     </Label>
                   </div>
@@ -113,12 +130,12 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
             </div>
 
             <div className="flex gap-3 items-stretch">
-              <div className="flex items-center gap-2 border-2 border-primary/20 rounded-xl px-3 bg-muted/30">
+              <div className={`flex items-center gap-2 border-2 border-primary/20 rounded-xl px-3 bg-muted/30 ${!isRestaurantOpen ? 'opacity-50' : ''}`}>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 1 || !isRestaurantOpen}
                   className="h-auto p-2 hover:bg-primary/10"
                 >
                   <span className="text-xl font-bold text-primary">−</span>
@@ -130,6 +147,7 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setQuantity(quantity + 1)}
+                  disabled={!isRestaurantOpen}
                   className="h-auto p-2 hover:bg-primary/10"
                 >
                   <span className="text-xl font-bold text-primary">+</span>
@@ -138,10 +156,20 @@ const MenuItemDialog = ({ item, open, onOpenChange }: MenuItemDialogProps) => {
               
               <Button
                 onClick={handleAddToCart}
-                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2"
+                disabled={!isRestaurantOpen}
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-lg rounded-xl transition-all duration-300 hover:shadow-xl hover:scale-105 gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                <ShoppingCart className="w-5 h-5" />
-                Add to Cart
+                {isRestaurantOpen ? (
+                  <>
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart
+                  </>
+                ) : (
+                  <>
+                    <Clock className="w-5 h-5" />
+                    Closed
+                  </>
+                )}
               </Button>
             </div>
           </div>

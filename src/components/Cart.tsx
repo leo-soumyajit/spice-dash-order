@@ -10,10 +10,12 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Trash2, Plus, Minus, X } from "lucide-react";
+import { Trash2, Plus, Minus, X, Clock, AlertCircle } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import AddressForm from "./AddressForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useRestaurantHours } from "@/hooks/use-restaurant-hours";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AddressData {
   name: string;
@@ -31,6 +33,7 @@ const Cart = () => {
   const { cartItems, removeFromCart, updateQuantity, clearCart, getTotalPrice, getItemCount } = useCart();
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { isOpen: isRestaurantOpen, nextOpenTime, openingHours } = useRestaurantHours();
   const itemCount = getItemCount();
   const totalPrice = getTotalPrice();
 
@@ -158,6 +161,16 @@ Please confirm this order. Thank you! 🙏`;
               <>
                 <div className="flex-1 min-h-0">
                   <div className="h-full overflow-y-auto no-scrollbar px-4 md:px-6">
+                    {!isRestaurantOpen && (
+                      <Alert className="bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800 my-4">
+                        <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        <AlertDescription className="text-red-800 dark:text-red-200">
+                          <p className="font-semibold mb-1">Restaurant is currently closed</p>
+                          <p className="text-sm">We'll be back at {nextOpenTime}</p>
+                          <p className="text-xs mt-1 text-red-600 dark:text-red-300">Regular hours: {openingHours}</p>
+                        </AlertDescription>
+                      </Alert>
+                    )}
                     <div className="space-y-3 py-4 pb-6">
                       {cartItems.map((cartItem, index) => {
                         const price = cartItem.portion === "half" && cartItem.item.half
@@ -197,12 +210,12 @@ Please confirm this order. Thank you! 🙏`;
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-destructive hover:bg-destructive/10"
                                 onClick={() => removeFromCart(index)}
+                                className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>
-                              <p className="font-bold text-primary text-lg whitespace-nowrap">₹{price * cartItem.quantity}</p>
+                              <p className="text-lg font-bold text-foreground">₹{price * cartItem.quantity}</p>
                             </div>
                           </div>
                         );
@@ -230,10 +243,18 @@ Please confirm this order. Thank you! 🙏`;
                     </div>
                     <Button
                       onClick={() => setShowAddressForm(true)}
-                      className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg"
+                      disabled={!isRestaurantOpen}
+                      className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                       size="lg"
                     >
-                      Proceed to Order
+                      {isRestaurantOpen ? (
+                        "Proceed to Order"
+                      ) : (
+                        <span className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Restaurant Closed
+                        </span>
+                      )}
                     </Button>
                   </div>
                 </DrawerFooter>
