@@ -15,6 +15,7 @@ import chowmein from "@/assets/chowmein.jpg";
 interface MenuItemCardProps {
   item: MenuItem;
   onClick: () => void;
+  variant?: "card" | "circle";
 }
 
 const imageMap: Record<string, string> = {
@@ -29,8 +30,39 @@ const imageMap: Record<string, string> = {
   "chowmein": chowmein,
 };
 
-const MenuItemCard = ({ item, onClick }: MenuItemCardProps) => {
+const MenuItemCard = ({ item, onClick, variant = "card" }: MenuItemCardProps) => {
   const imageSrc = imageMap[item.image] || chickenCurry;
+
+  if (variant === "circle") {
+    return (
+      <button
+        onClick={onClick}
+        className="group flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-muted/50 transition-all duration-300 cursor-pointer"
+      >
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden shadow-md group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+          <img
+            src={imageSrc}
+            alt={item.name}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        </div>
+        <div className="text-center">
+          <h3 className="font-semibold text-sm sm:text-base text-foreground line-clamp-1">
+            {item.name}
+          </h3>
+          <div className="flex items-center justify-center gap-0.5 text-primary font-bold text-sm sm:text-base mt-1">
+            <span>₹{item.price}</span>
+            {item.half && (
+              <span className="text-xs text-muted-foreground ml-1">
+                / ₹{item.half}
+              </span>
+            )}
+          </div>
+        </div>
+      </button>
+    );
+  }
 
   return (
     <div 
