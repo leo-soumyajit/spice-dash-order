@@ -1,5 +1,6 @@
 import { MenuItem } from "@/data/menuData";
 import MenuItemCard from "./MenuItemCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MenuSectionProps {
   category: string;
@@ -9,11 +10,13 @@ interface MenuSectionProps {
 
 const MenuSection = ({ category, items, onItemClick }: MenuSectionProps) => {
   const isAllItems = category === "All Items";
+  const isMobile = useIsMobile();
   
   // For "All Items", mix circular and card layouts
-  // First 16 items as circles (2 rows), rest as cards
-  const circularItems = isAllItems ? items.slice(0, 16) : [];
-  const cardItems = isAllItems ? items.slice(16) : items;
+  // 8 items on mobile (2 rows of 4), 16 on larger screens (2 rows of 8)
+  const circularCount = isMobile ? 8 : 16;
+  const circularItems = isAllItems ? items.slice(0, circularCount) : [];
+  const cardItems = isAllItems ? items.slice(circularCount) : items;
 
   return (
     <section className="py-8">
