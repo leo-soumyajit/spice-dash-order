@@ -11,9 +11,9 @@ const MenuSection = ({ category, items, onItemClick }: MenuSectionProps) => {
   const isAllItems = category === "All Items";
   
   // For "All Items", mix circular and card layouts
-  // First 8 items as circles, rest as cards
-  const circularItems = isAllItems ? items.slice(0, 8) : [];
-  const cardItems = isAllItems ? items.slice(8) : items;
+  // First 16 items as circles (2 rows), rest as cards
+  const circularItems = isAllItems ? items.slice(0, 16) : [];
+  const cardItems = isAllItems ? items.slice(16) : items;
 
   return (
     <section className="py-8">
@@ -26,7 +26,7 @@ const MenuSection = ({ category, items, onItemClick }: MenuSectionProps) => {
           <h3 className="text-sm font-semibold text-muted-foreground mb-4 uppercase tracking-wide">
             What's On Your Mind?
           </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 gap-4 mb-12">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 mb-12">
             {circularItems.map((item, index) => (
               <MenuItemCard 
                 key={`circle-${item.name}-${index}`} 
