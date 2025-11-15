@@ -11,6 +11,7 @@ export interface MenuCategory {
 }
 
 export const menuData: MenuCategory = {
+  "All Items": [], // Will be populated below
   "Chicken Items": [
     { name: "Chicken Pakora", price: 115, description: "Crispy deep-fried chicken fritters marinated with aromatic spices and gram flour coating. Served hot with mint chutney.", image: "chicken-pakora" },
     { name: "Chicken Lolipop", price: 125, description: "Indo-Chinese style chicken drumettes marinated in spicy batter, deep-fried until golden and crispy. A perfect appetizer.", image: "chicken-pakora" },
@@ -89,5 +90,10 @@ export const menuData: MenuCategory = {
     { name: "Chicken Chowmein", price: 70, half: 50, description: "Delicious noodles stir-fried with tender chicken pieces, crunchy vegetables, and aromatic sauces.", image: "chowmein" }
   ]
 };
+
+// Populate "All Items" with all menu items from other categories
+menuData["All Items"] = Object.entries(menuData)
+  .filter(([category]) => category !== "All Items")
+  .flatMap(([_, items]) => items);
 
 export const categories = Object.keys(menuData);
